@@ -8,13 +8,14 @@ const { SECRET } = require("../config");
  * @DESC To register the user (ADMIN, SUPER_ADMIN, USER)
  */
 const userRegister = async (userDets, role, res) => {
+  console.log("dd");
   try {
     // Validate the username
     let usernameNotTaken = await validateUsername(userDets.username);
     if (!usernameNotTaken) {
       return res.status(400).json({
         message: `Username is already taken.`,
-        success: false
+        success: false,
       });
     }
 
@@ -23,7 +24,7 @@ const userRegister = async (userDets, role, res) => {
     if (!emailNotRegistered) {
       return res.status(400).json({
         message: `Email is already registered.`,
-        success: false
+        success: false,
       });
     }
 
@@ -33,19 +34,19 @@ const userRegister = async (userDets, role, res) => {
     const newUser = new User({
       ...userDets,
       password,
-      role
+      role,
     });
 
     await newUser.save();
     return res.status(201).json({
       message: "Hurry! now you are successfully registred. Please nor login.",
-      success: true
+      success: true,
     });
   } catch (err) {
     // Implement logger function (winston)
     return res.status(500).json({
       message: "Unable to create your account.",
-      success: false
+      success: false,
     });
   }
 };
@@ -60,14 +61,14 @@ const userLogin = async (userCreds, role, res) => {
   if (!user) {
     return res.status(404).json({
       message: "Username is not found. Invalid login credentials.",
-      success: false
+      success: false,
     });
   }
   // We will check the role
   if (user.role !== role) {
     return res.status(403).json({
       message: "Please make sure you are logging in from the right portal.",
-      success: false
+      success: false,
     });
   }
   // That means user is existing and trying to signin fro the right portal
@@ -80,7 +81,7 @@ const userLogin = async (userCreds, role, res) => {
         user_id: user._id,
         role: user.role,
         username: user.username,
-        email: user.email
+        email: user.email,
       },
       SECRET,
       { expiresIn: "7 days" }
@@ -91,23 +92,23 @@ const userLogin = async (userCreds, role, res) => {
       role: user.role,
       email: user.email,
       token: `Bearer ${token}`,
-      expiresIn: 168
+      expiresIn: 168,
     };
 
     return res.status(200).json({
       ...result,
       message: "Hurray! You are now logged in.",
-      success: true
+      success: true,
     });
   } else {
     return res.status(403).json({
       message: "Incorrect password.",
-      success: false
+      success: false,
     });
   }
 };
 
-const validateUsername = async username => {
+const validateUsername = async (username) => {
   let user = await User.findOne({ username });
   return user ? false : true;
 };
@@ -120,24 +121,24 @@ const userAuth = passport.authenticate("jwt", { session: false });
 /**
  * @DESC Check Role Middleware
  */
-const checkRole = roles => (req, res, next) =>
+const checkRole = (roles) => (req, res, next) =>
   !roles.includes(req.user.role)
     ? res.status(401).json("Unauthorized")
     : next();
 
-const validateEmail = async email => {
+const validateEmail = async (email) => {
   let user = await User.findOne({ email });
   return user ? false : true;
 };
 
-const serializeUser = user => {
+const serializeUser = (user) => {
   return {
     username: user.username,
     email: user.email,
     name: user.name,
     _id: user._id,
     updatedAt: user.updatedAt,
-    createdAt: user.createdAt
+    createdAt: user.createdAt,
   };
 };
 
@@ -146,5 +147,5 @@ module.exports = {
   checkRole,
   userLogin,
   userRegister,
-  serializeUser
+  serializeUser,
 };
