@@ -3,15 +3,15 @@ const jwt = require("jsonwebtoken");
 const passport = require("passport");
 const User = require("../models/User");
 const { SECRET } = require("../config");
-
 /**
  * @DESC To register the user (ADMIN, SUPER_ADMIN, USER)
  */
 const userRegister = async (userDets, role, res) => {
-  console.log("dd");
+  const { username, email, password: userPassword } = userDets;
   try {
     // Validate the username
     let usernameNotTaken = await validateUsername(userDets.username);
+
     if (!usernameNotTaken) {
       return res.status(400).json({
         message: `Username is already taken.`,
@@ -29,24 +29,18 @@ const userRegister = async (userDets, role, res) => {
     }
 
     // Get the hashed password
-    const password = await bcrypt.hash(userDets.password, 12);
-    // create a new user
-    const newUser = new User({
-      ...userDets,
-      password,
-      role,
-    });
-
-    await newUser.save();
+    const password = await bcrypt.hash(userPassword, 12);
+    User.create({ username, email, password, role });
     return res.status(201).json({
       message: "Hurry! now you are successfully registred. Please nor login.",
       success: true,
     });
-  } catch (err) {
+  } catch (errorMsg) {
     // Implement logger function (winston)
     return res.status(500).json({
       message: "Unable to create your account.",
       success: false,
+      errorMsg,
     });
   }
 };

@@ -27,12 +27,12 @@ const startApp = async () => {
     await connect(DB, {
       useFindAndModify: true,
       useUnifiedTopology: true,
-      useNewUrlParser: true
+      useNewUrlParser: true,
     });
 
     success({
       message: `Successfully connected with the Database \n${DB}`,
-      badge: true
+      badge: true,
     });
 
     // Start Listenting for the server on PORT
@@ -42,7 +42,7 @@ const startApp = async () => {
   } catch (err) {
     error({
       message: `Unable to connect with Database \n${err}`,
-      badge: true
+      badge: true,
     });
     startApp();
   }
