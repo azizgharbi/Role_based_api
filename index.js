@@ -7,7 +7,6 @@ const { success, error } = require("consola");
 
 // Bring in the app constants
 const { DB, PORT } = require("./config");
-
 // Initialize the application
 const app = exp();
 
@@ -19,7 +18,8 @@ app.use(passport.initialize());
 require("./middlewares/passport")(passport);
 
 // User Router Middleware
-app.use("/api/users", require("./routes/users"));
+app.use("/api/v1/users", require("./routes/users"));
+app.use("/api/v1/", require("./routes/service-health"));
 
 const startApp = async () => {
   try {
