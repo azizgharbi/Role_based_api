@@ -9,8 +9,8 @@ services:
       - mongo:27017
     environment:
       PORT: 5000
+    command: nodemon index.js
   mongo:
     image: mongo
     ports:
       - 27017:27017
-    command: "--smallfiles --logpath=/dev/null"
