@@ -8,4 +8,3 @@ RUN npm install -g nodemon
 # Bundle app source
 COPY . .
 EXPOSE 5000
-CMD [ "npm", "star" ]
